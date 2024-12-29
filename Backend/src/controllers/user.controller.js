@@ -1,8 +1,8 @@
-import { asynchandler} from "../utils/asynchandler";
-import {handleresponse} from "../utils/apiresponses";
-import {handleerror} from "../utils/apierror";
-import User from "../models/user.models"
 import jwt from "jsonwebtoken";
+import { handleerror } from "../utils/apierror.js";
+import { handleresponse } from "../utils/apiresponse.js";
+import { User } from "../models/user.models.js";
+import { asynchandler } from "../utils/asynchandler.js";
 const generateAccessandRefreshtoken=async(userid)=>{
     try {
         const user=await User.findById(userid);
@@ -18,19 +18,20 @@ const generateAccessandRefreshtoken=async(userid)=>{
 } 
 const registeruser=asynchandler(async (req,res)=>{
 
-    try {
         const {name,email,password}=req.body;
     
         if(
             [name,email,password].some((field)=>field?.trim() === "")
         )
         {
+            console.log("error here2")
             throw new handleerror(400,"All field are required");
         }
     
         const isexisted=await User.findOne({email})
         if(isexisted)
         {
+            console.log("error here1")
             throw new handleerror(409,"User with this email already exist");
         }
         const user=await User.create({
@@ -38,19 +39,21 @@ const registeruser=asynchandler(async (req,res)=>{
             email,
             password
         })
+        if(!user){
+            console.log("error here3")
+            throw new handleerror(500,"Something went wrong while registering user")
+        }
         const createduser=await User.findById(user._id).select(
             "-password -RefereshToken"
         )
         if(!createduser)
         {
+            console.log("error here")
             throw new handleerror(500,"Something went wrong while registering user")
         }
         return res.status(201).json(
             new handleresponse(200,createduser,"User Created and Registered successfully")
         )
-    } catch (error) {
-        throw new handleerror(500,error.message)
-    }
 })
 const loginuser=asynchandler(async(req,res)=>{
     const {email,password}=req.body;
