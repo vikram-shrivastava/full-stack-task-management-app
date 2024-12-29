@@ -12,7 +12,9 @@ app.use(cookieParser())
 
 //routes import
 import userRoutes from './routes/user.route.js';
+import taskRoutes from './routes/task-management.route.js';
 //routes declaration
 app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/task', taskRoutes);
 export {app}
 // http://localhost:5000/api/v1/user/register
