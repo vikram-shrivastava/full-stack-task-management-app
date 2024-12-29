@@ -1,1 +1,1 @@
-export const DB_NAME="full-stack-task-management-app";
+export const DB_NAME="TaskManagement";
