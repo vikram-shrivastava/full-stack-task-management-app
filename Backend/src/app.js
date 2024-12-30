@@ -15,6 +15,8 @@ import userRoutes from './routes/user.route.js';
 import taskRoutes from './routes/task-management.route.js';
 //routes declaration
 app.use('/api/v1/user', userRoutes);
-app.use('/api/v1/task', taskRoutes);
+app.use('/api/v1/tasks', taskRoutes);
+
 export {app}
 // http://localhost:5000/api/v1/user/register
+//http://localhost:5000/api/v1/tasks/:id

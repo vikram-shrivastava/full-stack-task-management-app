@@ -8,7 +8,7 @@ const generateAccessandRefreshtoken=async(userid)=>{
         const user=await User.findById(userid);
         const accesstoken=user.generateaccesstoken();
         const refreshtoken=user.generaterefreshtoken();
-        user.refreshtoken=refreshtoken;
+        user.RefreshToken=refreshtoken;
         await user.save({validateBeforeSave:false});
 
         return {accesstoken,refreshtoken};
@@ -135,21 +135,23 @@ const refreshAccessToken=asynchandler(async(req,res)=>{
             throw new handleerror(401,"Invalid refresh token");
         }
         if(incomingrefreshtoken!==user?.RefreshToken){
+            console.log("incoming: ",incomingrefreshtoken)
+            console.log("user: ",user)
             throw new handleerror(401,"Refresh Token Expired or used")
         }
         const options={
             httpOnly:true,
             secure:true
         }
-        const {accesstoken,newrefreshtoken}=await generateAccessandRefreshtoken(user._id)
+        const {accesstoken,refreshtoken}=await generateAccessandRefreshtoken(user._id)
         return res
         .status(200)
         .cookie("accesstoken",accesstoken,options)
-        .cookie("refreshtoken",newrefreshtoken,options)
+        .cookie("refreshtoken",refreshtoken,options)
         .json(
             new handleresponse(
                 200,
-                {accesstoken,refreshtoken:newrefreshtoken},
+                {accesstoken,refreshtoken:refreshtoken},
                 "Access Token Refreshed"
                 
             )
@@ -162,12 +164,11 @@ const refreshAccessToken=asynchandler(async(req,res)=>{
     }
 })
 const updateuserdetail=asynchandler(async(req,res)=>{
-    const{name,email}=req.body
+    const{name}=req.body
     const user=await User.findByIdAndUpdate(
         req.user._id,
         {
             name:name,
-            email:email
         },
         {
             new:true

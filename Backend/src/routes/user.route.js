@@ -8,7 +8,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router=Router();
 router.post("/register",registeruser)
 router.post("/login",loginuser)
-router.post("/logout",logoutuser)
+router.route("/logout").post(verifyJWT,logoutuser)
 router.post("/refresh-token",refreshAccessToken)
-router.post("/update",verifyJWT,updateuserdetail)
+router.route("/update").patch(verifyJWT,updateuserdetail)
 export default router
